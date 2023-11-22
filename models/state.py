@@ -1,18 +1,22 @@
 #!/usr/bin/python3
 """ State Module for HBNB project """
-from models.base_model import BaseModel
-from sqlalchemy import create_engine, Column, String, Integer
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from models.base_model import BaseModel, Base
+from sqlalchemy import Column, String, Integer
+from sqlalchemy.orm import relationship
+import os
 
 
 class State(BaseModel, Base):
     """ State class """
-    __tablename__ = 'states' 
-  #  name = ""
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
+    __tablename__ = 'states'
+    # name = ""
+    name = Column(String(128), nullable=False)
+    cities = relationship("City", backref="state",
+                          cascade="all, delete-orphan")
 
-engine = create_engine('sqlite:///your_database.db')
-Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
+    if os.environ['HBNB_ENV'] != 'db':
+        @property
+        def cities(self):
+            from models import storage
+            dic = storage.all('City')
+            return [].append(v for k, v in dic.items() if self.id == v['state_id'])
