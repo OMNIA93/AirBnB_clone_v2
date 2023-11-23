@@ -55,10 +55,13 @@ class FileStorage:
         except FileNotFoundError:
             pass
 
- def delete(self, obj=None):
+    def delete(self, obj=None):
         """Saves storage dictionary to file"""
         if obj:
             key = "{}.{}".format(obj.__class__.__name__, obj.id)
             if key in FileStorage.__objects:
                 del FileStorage.__objects[key]
                 self.save()
+
+
+
